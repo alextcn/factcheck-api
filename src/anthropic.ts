@@ -27,6 +27,16 @@ Assistant:
 [
 `
 
+export class LLMSyntaxError extends Error {
+  llmResponse: string
+
+  constructor(message: string, llmResponse: string) {
+    super(message)
+    Object.setPrototypeOf(this, LLMSyntaxError.prototype)
+    this.llmResponse = llmResponse
+  }
+}
+
 export class AI {
   client: Anthropic
 
@@ -54,10 +64,15 @@ export class AI {
     })
 
     // TODO: add types
-    // TODO: handle parse errors
     const response = '[' + completion.completion
-    console.log(`anthropic response:`, response)
+    console.log(`----------------\nanthropic response:\n\n${response}\n----------------`)
 
-    return JSON.parse(response)
+    try {
+      return JSON.parse(response)
+    } catch (e) {
+      throw e instanceof SyntaxError
+        ? new LLMSyntaxError(e.message, '[' + completion.completion)
+        : e
+    }
   }
 }

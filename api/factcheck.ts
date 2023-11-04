@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { AI } from '../src/anthropic'
+import { AI, LLMSyntaxError } from '../src/anthropic'
 
 // Vercel Function config
 export const config = {
@@ -19,10 +19,18 @@ export default async (request: VercelRequest, response: VercelResponse) => {
       error: 'missing article in the body'
     })
   }
-  console.log('article:', article.substring(0, 100))
+  console.log('article:', `[${article.substring(0, 100)}...]`)
 
   const ai = new AI()
-  const result = await ai.factcheck(article)
-
-  response.status(200).json(result)
+  try {
+    const result = await ai.factcheck(article)
+    response.status(200).json(result)
+  } catch (e) {
+    if (e instanceof LLMSyntaxError) {
+      return response.status(400).json({
+        error: 'failed to parse LLM response',
+        llmResponse: e.llmResponse
+      })
+    }
+  }
 }
