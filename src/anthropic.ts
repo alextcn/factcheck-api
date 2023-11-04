@@ -9,7 +9,7 @@ Your goal is to help people find false, propagandistic, misleading statements.
 Analyize the article above, find the most misleading statements and explain what's wrong with them.
 
 Your answer will always be verified by a human, so do not worry about giving a certain answer,
-just highlight the most prolific examples. 
+just highlight the most prolific examples.
 
 Think step by step.
 
@@ -17,7 +17,10 @@ Reply with json: [
   {
     "quote: "<the quote you want to fact-check>",
     "reason_for_doubt": "<why do you think this is false?>",
-    "danger_level": "<low/mid/high>"
+    "danger_level": "<low/mid/high>",
+    "search_queries": [
+      "<query to find more factual information about this claim>"
+    ]
   }
 ]
 
@@ -56,7 +59,7 @@ export class AI {
     return completion.completion
   }
 
-  async factcheck(article: string): Promise<string> {
+  async factcheck(article: string): Promise<MisleadingItems[]> {
     const completion = await this.client.completions.create({
       model: 'claude-2',
       max_tokens_to_sample: 10_000,
@@ -68,7 +71,7 @@ export class AI {
     console.log(`----------------\nanthropic response:\n\n${response}\n----------------`)
 
     try {
-      return JSON.parse(response)
+      return JSON.parse(response) as MisleadingItems[]
     } catch (e) {
       throw e instanceof SyntaxError
         ? new LLMSyntaxError(e.message, '[' + completion.completion)
