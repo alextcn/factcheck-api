@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { AI } from '../src/anthropic'
 import brave from '../src/brave'
-import { fetchSources } from '../src/web'
+import { fetchSources } from '../src/sources'
 
 type Params = {
   message: string

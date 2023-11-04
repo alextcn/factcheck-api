@@ -1,8 +1,20 @@
-type MisleadingItems = {
+type FactcheckItem = {
   quote: string
   reason_for_doubt: string
   danger_level: string
   search_queries: string[]
+}
+
+type ProoveItem = {
+  quote: string
+  reason_for_doubt: string
+  danger_level: string
+  sources: [
+    {
+      url: string
+      content: string
+    }
+  ]
 }
 
 type SearchResponse = {
