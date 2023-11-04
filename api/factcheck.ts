@@ -1,8 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { AI } from '../src/anthropic'
 
-type Params = {
-  article: string
+// Vercel Function config
+export const config = {
+  maxDuration: 120 // 2 minutes
 }
 
 export default async (request: VercelRequest, response: VercelResponse) => {
