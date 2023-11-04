@@ -21,7 +21,7 @@ Reply with json: [
   }
 ]
 
-Or reply with empty JSON if no false statements were found: [].
+Or reply with empty JSON if no false statements were found: []. Do not add preambles or postscripts.
 
 Assistant: 
 [
@@ -49,10 +49,15 @@ export class AI {
   async factcheck(article: string): Promise<string> {
     const completion = await this.client.completions.create({
       model: 'claude-2',
-      max_tokens_to_sample: 300,
-      prompt: `${Anthropic.HUMAN_PROMPT} ${article}${Anthropic.AI_PROMPT}`
+      max_tokens_to_sample: 10_000,
+      prompt: PROMPT_TEMPLATE.replace('{{article}}', article)
     })
 
-    return completion.completion
+    // TODO: add types
+    // TODO: handle parse errors
+    const response = '[' + completion.completion
+    console.log(`anthropic response:`, response)
+
+    return JSON.parse(response)
   }
 }
